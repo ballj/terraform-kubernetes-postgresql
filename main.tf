@@ -4,7 +4,7 @@ locals {
     "app.kubernetes.io/instance" = "master"
     "app.kubernetes.io/part-of"  = lookup(var.labels, "app.kubernetes.io/part-of", var.object_prefix)
   }
-  common_labels   = merge(var.labels, local.selector_labels, {
+  common_labels = merge(var.labels, local.selector_labels, {
     "app.kubernetes.io/managed-by" = "terraform"
     "app.kubernetes.io/component"  = "postgresql"
   })
@@ -23,10 +23,10 @@ resource "kubernetes_stateful_set" "postgresql" {
   }
   wait_for_rollout = var.wait_for_rollout
   spec {
-    pod_management_policy     = var.pod_management_policy
-    replicas                  = 1
-    revision_history_limit    = var.revision_history
-    service_name              = kubernetes_service.postgresql.metadata[0].name
+    pod_management_policy  = var.pod_management_policy
+    replicas               = 1
+    revision_history_limit = var.revision_history
+    service_name           = kubernetes_service.postgresql.metadata[0].name
     selector {
       match_labels = local.selector_labels
     }
@@ -47,18 +47,18 @@ resource "kubernetes_stateful_set" "postgresql" {
         dynamic "security_context" {
           for_each = var.security_context_enabled ? [1] : []
           content {
-            run_as_non_root            = true
-            run_as_user                = var.security_context_uid
-            run_as_group               = var.security_context_gid
-            fs_group                   = var.security_context_gid
+            run_as_non_root = true
+            run_as_user     = var.security_context_uid
+            run_as_group    = var.security_context_gid
+            fs_group        = var.security_context_gid
           }
         }
         container {
           image = format("%s:%s", var.image_name, var.image_tag)
           name  = regex("[[:alnum:]]+$", var.image_name)
           port {
-            name = "sql"
-            protocol = "TCP"
+            name           = "sql"
+            protocol       = "TCP"
             container_port = kubernetes_service.postgresql.spec[0].port[0].target_port
           }
           env {
@@ -78,7 +78,7 @@ resource "kubernetes_stateful_set" "postgresql" {
             value = var.username
           }
           env {
-            name  = "POSTGRESQL_PASSWORD"
+            name = "POSTGRESQL_PASSWORD"
             value_from {
               secret_key_ref {
                 name = length(var.password_secret) == 0 ? kubernetes_secret.postgresql[0].metadata[0].name : var.password_secret
@@ -94,7 +94,7 @@ resource "kubernetes_stateful_set" "postgresql" {
             }
           }
           dynamic "env" {
-            for_each = [for env_var in var.env_secret: {
+            for_each = [for env_var in var.env_secret : {
               name   = env_var.name
               secret = env_var.secret
               key    = env_var.key
@@ -158,15 +158,15 @@ resource "kubernetes_stateful_set" "postgresql" {
           dynamic "empty_dir" {
             for_each = length(var.pvc_name) > 0 ? [] : [1]
             content {
-             medium     = var.empty_dir_medium
-             size_limit = var.empty_dir_size
+              medium     = var.empty_dir_medium
+              size_limit = var.empty_dir_size
             }
           }
           dynamic "persistent_volume_claim" {
             for_each = length(var.pvc_name) > 0 ? [1] : []
             content {
-             claim_name = var.pvc_name
-             read_only  = false
+              claim_name = var.pvc_name
+              read_only  = false
             }
           }
         }
@@ -220,9 +220,9 @@ resource "kubernetes_service" "postgresql" {
 resource "kubernetes_secret" "postgresql" {
   count = length(var.password_secret) == 0 ? 1 : 0
   metadata {
-    namespace   = var.namespace
-    name        = var.object_prefix
-    labels = local.common_labels
+    namespace = var.namespace
+    name      = var.object_prefix
+    labels    = local.common_labels
   }
   data = {
     (var.password_key) = random_password.password[0].result
@@ -230,7 +230,7 @@ resource "kubernetes_secret" "postgresql" {
 }
 
 resource "random_password" "password" {
-  count = length(var.password_secret) == 0 ? 1 : 0
-  length = 16
+  count   = length(var.password_secret) == 0 ? 1 : 0
+  length  = 16
   special = false
 }

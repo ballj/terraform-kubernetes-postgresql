@@ -1,6 +1,6 @@
 output "hostname" {
   description = "Name of the kubernetes service"
-  value = kubernetes_service.postgresql.metadata[0].name
+  value       = kubernetes_service.postgresql.metadata[0].name
 }
 
 output "port" {

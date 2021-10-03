@@ -46,7 +46,7 @@ variable "image_name" {
 variable "image_tag" {
   type        = string
   description = "Docker image tag to use"
-  default     = "13.3.0-debian-10-r12"
+  default     = "13.4.0-debian-10-r51"
 }
 
 variable "username" {
