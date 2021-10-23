@@ -32,6 +32,10 @@ module "postgresql" {
 | `labels`                          | No       | N/A                         | Common labels to add to all objects - See example  |
 | `image_name`                      | No       | `bitnami/postgresql`        | Image to deploy as part of deployment              |
 | `image_tag`                       | No       | `13.3.0-debian-10-r12`      | Image tag to deploy                                |
+| `resources_requests_cpu`          | No       | `null`                      | The minimum amount of compute resources required   |
+| `resources_requests_memory`       | No       | `null`                      | The minimum amount of compute resources required   |
+| `resources_limits_cpu`            | No       | `null`                      | The maximum amount of compute resources allowed    |
+| `resources_limits_memory`         | No       | `null`                      | The maximum amount of compute resources allowed    |
 | `wait_for_rollout`                | No       | `true`                      | Wait for the StatefulSet to finish rolling out     |
 | `pod_management_policy`           | No       | `OrderedReady`              | Controls how pods are created during scaling       |
 | `update_strategy`                 | No       | `RollingUpdate`             | Strategy to use, `OnDelete` or `RollingUpdate`     |

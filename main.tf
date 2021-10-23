@@ -56,6 +56,16 @@ resource "kubernetes_stateful_set" "postgresql" {
         container {
           image = format("%s:%s", var.image_name, var.image_tag)
           name  = regex("[[:alnum:]]+$", var.image_name)
+          resources {
+            limits = {
+              cpu    = var.resources_limits_cpu
+              memory = var.resources_limits_memory
+            }
+            requests = {
+              cpu    = var.resources_requests_cpu
+              memory = var.resources_requests_memory
+            }
+          }
           port {
             name           = "sql"
             protocol       = "TCP"
