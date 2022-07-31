@@ -96,6 +96,10 @@ resource "kubernetes_stateful_set_v1" "postgresql" {
             value = var.username
           }
           env {
+            name  = "PGUSER"
+            value = var.username
+          }
+          env {
             name = local.use_bitnami? "POSTGRESQL_PASSWORD" : "POSTGRES_PASSWORD"
             value_from {
               secret_key_ref {
