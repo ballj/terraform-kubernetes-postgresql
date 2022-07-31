@@ -10,7 +10,7 @@ locals {
   })
 }
 
-resource "kubernetes_stateful_set" "postgresql" {
+resource "kubernetes_stateful_set_v1" "postgresql" {
   timeouts {
     create = var.timeout_create
     update = var.timeout_update
@@ -26,7 +26,7 @@ resource "kubernetes_stateful_set" "postgresql" {
     pod_management_policy  = var.pod_management_policy
     replicas               = 1
     revision_history_limit = var.revision_history
-    service_name           = kubernetes_service.postgresql.metadata[0].name
+    service_name           = kubernetes_service_v1.postgresql.metadata[0].name
     selector {
       match_labels = local.selector_labels
     }
@@ -69,7 +69,7 @@ resource "kubernetes_stateful_set" "postgresql" {
           port {
             name           = "sql"
             protocol       = "TCP"
-            container_port = kubernetes_service.postgresql.spec[0].port[0].target_port
+            container_port = kubernetes_service_v1.postgresql.spec[0].port[0].target_port
           }
           env {
             name  = "BITNAMI_DEBUG"
@@ -77,7 +77,7 @@ resource "kubernetes_stateful_set" "postgresql" {
           }
           env {
             name  = "POSTGRESQL_PORT_NUMBER"
-            value = kubernetes_service.postgresql.spec[0].port[0].target_port
+            value = kubernetes_service_v1.postgresql.spec[0].port[0].target_port
           }
           env {
             name  = "POSTGRESQL_DATABASE"
@@ -91,7 +91,7 @@ resource "kubernetes_stateful_set" "postgresql" {
             name = "POSTGRESQL_PASSWORD"
             value_from {
               secret_key_ref {
-                name = length(var.password_secret) == 0 ? kubernetes_secret.postgresql[0].metadata[0].name : var.password_secret
+                name = length(var.password_secret) == 0 ? kubernetes_secret_v1.postgresql[0].metadata[0].name : var.password_secret
                 key  = var.password_key
               }
             }
@@ -206,7 +206,7 @@ resource "kubernetes_stateful_set" "postgresql" {
   }
 }
 
-resource "kubernetes_service" "postgresql" {
+resource "kubernetes_service_v1" "postgresql" {
   metadata {
     namespace   = var.namespace
     name        = var.object_prefix
@@ -227,7 +227,7 @@ resource "kubernetes_service" "postgresql" {
   }
 }
 
-resource "kubernetes_secret" "postgresql" {
+resource "kubernetes_secret_v1" "postgresql" {
   count = length(var.password_secret) == 0 ? 1 : 0
   metadata {
     namespace = var.namespace
