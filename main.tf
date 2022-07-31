@@ -83,6 +83,13 @@ resource "kubernetes_stateful_set_v1" "postgresql" {
             name  = "BITNAMI_DEBUG"
             value = false
           }
+          dynamic "env" {
+            content {
+              name = "PGDATA"
+              value = "/bitnami/postgresql/data"
+            }
+            for_each = local.use_bitnami ? [] : [1]
+          }
           env {
             name  = local.use_bitnami ? "POSTGRESQL_PORT_NUMBER" : "POSTGRES_PORT"
             value = kubernetes_service_v1.postgresql.spec[0].port[0].target_port
@@ -135,7 +142,7 @@ resource "kubernetes_stateful_set_v1" "postgresql" {
           }
           volume_mount {
             name       = "data"
-            mount_path = local.use_bitnami ? "/bitnami/postgresql" : "/var/lib/postgresql"
+            mount_path = "/bitnami/postgresql"
           }
           dynamic "readiness_probe" {
             for_each = var.readiness_probe_enabled ? [1] : []
