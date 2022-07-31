@@ -137,3 +137,7 @@ module "redis" {
 The image must be run with `security_context_gid` set to 0 otherwise it does
 not create the database correctly. This looks to be in progress in
 [issue 242](https://github.com/bitnami/bitnami-docker-postgresql/issues/242).
+
+# Non-bitnami images
+If you want to run this with a standard postgres image (solves the above problem) be sure to
+set both `security_context_gid` and `security_context_uid` to `999`
