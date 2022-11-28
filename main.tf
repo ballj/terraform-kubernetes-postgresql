@@ -52,6 +52,7 @@ resource "kubernetes_stateful_set" "postgresql" {
         annotations = var.template_annotations
       }
       spec {
+        service_account_name = length(var.service_account_name) > 0 ? var.service_account_name : null
         dynamic "security_context" {
           for_each = var.security_context_enabled ? [1] : []
           content {

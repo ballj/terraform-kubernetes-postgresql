@@ -49,6 +49,12 @@ variable "image_tag" {
   default     = "13.4.0-debian-10-r51"
 }
 
+variable "service_account_name" {
+  type        = string
+  description = "Service account name to add to the pod"
+  default     = ""
+}
+
 variable "username" {
   type        = string
   description = "Username of new user to create"

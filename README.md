@@ -32,6 +32,7 @@ module "postgresql" {
 | `labels`                          | No       | N/A                         | Common labels to add to all objects - See example  |
 | `image_name`                      | No       | `bitnami/postgresql`        | Image to deploy as part of deployment              |
 | `image_tag`                       | No       | `13.3.0-debian-10-r12`      | Image tag to deploy                                |
+| `service_account_name`            | No       | `""`                        | Service account to attach to the pod               |
 | `timeout_create`                  | No       | `3m`                        | Timeout for creating the deployment                |
 | `timeout_update`                  | No       | `3m`                        | Timeout for updating the deployment                |
 | `timeout_delete`                  | No       | `10m`                       | Timeout for deleting the deployment                |
