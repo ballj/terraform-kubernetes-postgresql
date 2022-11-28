@@ -85,6 +85,18 @@ variable "wait_for_rollout" {
   default     = true
 }
 
+variable "annotations" {
+  type        = map(string)
+  description = "Annotations to add to the deployment"
+  default     = {}
+}
+
+variable "template_annotations" {
+  type        = map(string)
+  description = "Annotations to add to the template"
+  default     = {}
+}
+
 variable "pod_management_policy" {
   type        = string
   description = "Controls how pods are created during scale up or down"

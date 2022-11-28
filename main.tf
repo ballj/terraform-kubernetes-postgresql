@@ -23,9 +23,10 @@ resource "kubernetes_stateful_set" "postgresql" {
     delete = var.timeout_delete
   }
   metadata {
-    namespace = var.namespace
-    name      = var.object_prefix
-    labels    = local.common_labels
+    namespace   = var.namespace
+    name        = var.object_prefix
+    labels      = local.common_labels
+    annotations = var.annotations
   }
   wait_for_rollout = var.wait_for_rollout
   spec {
@@ -47,7 +48,8 @@ resource "kubernetes_stateful_set" "postgresql" {
     }
     template {
       metadata {
-        labels = local.selector_labels
+        labels      = local.selector_labels
+        annotations = var.template_annotations
       }
       spec {
         dynamic "security_context" {

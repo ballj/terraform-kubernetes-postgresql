@@ -7,7 +7,7 @@ This terraform module deploys a PostgreSQL statefulset into a kubernetes cluster
 ```
 module "postgresql" {
   source        = "ballj/postgresql/kubernetes"
-  version       = "~> 1.0"
+  version       = "~> 1.2"
   namespace     = "production"
   object_prefix = "myapp-db"
   database_name = "myapp_db"
@@ -35,6 +35,8 @@ module "postgresql" {
 | `timeout_create`                  | No       | `3m`                        | Timeout for creating the deployment                |
 | `timeout_update`                  | No       | `3m`                        | Timeout for updating the deployment                |
 | `timeout_delete`                  | No       | `10m`                       | Timeout for deleting the deployment                |
+| `annotations`                     | No       | `{}`                        | Annotations to add to the statefulset              |
+| `template_annotations`            | No       | `{}`                        | Annotations to add to the template (recreate pods) |
 | `resources_requests_cpu`          | No       | `null`                      | The minimum amount of compute resources required   |
 | `resources_requests_memory`       | No       | `null`                      | The minimum amount of compute resources required   |
 | `resources_limits_cpu`            | No       | `null`                      | The maximum amount of compute resources allowed    |
