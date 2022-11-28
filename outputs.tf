@@ -10,7 +10,7 @@ output "port" {
 
 output "password_secret" {
   description = "Secret that is created with the database password"
-  value       = length(var.password_secret) == 0 ? kubernetes_secret.postgresql[0].metadata[0].name : var.password_secret
+  value       = local.create_password ? kubernetes_secret.postgresql[0].metadata[0].name : var.password_secret
 }
 
 output "password_key" {

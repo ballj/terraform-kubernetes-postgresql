@@ -8,6 +8,12 @@ locals {
     "app.kubernetes.io/managed-by" = "terraform"
     "app.kubernetes.io/component"  = "postgresql"
   })
+  create_password = anytrue([contains(keys(var.env), "POSTGRESQL_PASSWORD_FILE"), length(var.password_secret) > 0]) ? false : true
+  env_secret = contains(keys(var.env), "POSTGRESQL_PASSWORD_FILE") ? var.env_secret : flatten([[{
+    name   = "POSTGRESQL_PASSWORD",
+    secret = length(var.password_secret) == 0 ? kubernetes_secret.postgresql[0].metadata[0].name : var.password_secret,
+    key    = var.password_key
+  }], var.env_secret])
 }
 
 resource "kubernetes_stateful_set" "postgresql" {
@@ -87,15 +93,6 @@ resource "kubernetes_stateful_set" "postgresql" {
             name  = "POSTGRESQL_USERNAME"
             value = var.username
           }
-          env {
-            name = "POSTGRESQL_PASSWORD"
-            value_from {
-              secret_key_ref {
-                name = length(var.password_secret) == 0 ? kubernetes_secret.postgresql[0].metadata[0].name : var.password_secret
-                key  = var.password_key
-              }
-            }
-          }
           dynamic "env" {
             for_each = var.env
             content {
@@ -104,7 +101,7 @@ resource "kubernetes_stateful_set" "postgresql" {
             }
           }
           dynamic "env" {
-            for_each = [for env_var in var.env_secret : {
+            for_each = [for env_var in local.env_secret : {
               name   = env_var.name
               secret = env_var.secret
               key    = env_var.key
@@ -228,7 +225,7 @@ resource "kubernetes_service" "postgresql" {
 }
 
 resource "kubernetes_secret" "postgresql" {
-  count = length(var.password_secret) == 0 ? 1 : 0
+  count = local.create_password ? 1 : 0
   metadata {
     namespace = var.namespace
     name      = var.object_prefix
@@ -240,7 +237,7 @@ resource "kubernetes_secret" "postgresql" {
 }
 
 resource "random_password" "password" {
-  count   = length(var.password_secret) == 0 ? 1 : 0
-  length  = 16
+  count   = local.create_password ? 1 : 0
+  length  = var.password_autocreate_length
   special = false
 }

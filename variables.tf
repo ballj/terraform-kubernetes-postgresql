@@ -61,6 +61,18 @@ variable "password_secret" {
   default     = ""
 }
 
+variable "password_autocreate_length" {
+  type        = number
+  description = "Length of the automatically generated password"
+  default     = 16
+}
+
+variable "password_autocreate_special" {
+  type        = bool
+  description = "Use special characters in the generated password"
+  default     = false
+}
+
 variable "password_key" {
   type        = string
   description = "Key containing database password information"
