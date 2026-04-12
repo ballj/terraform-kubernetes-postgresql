@@ -13,24 +13,6 @@ variable "name" {
   description = "Name of the database to create"
 }
 
-variable "timeout_create" {
-  type        = string
-  description = "Timeout for creating the statefulset"
-  default     = "3m"
-}
-
-variable "timeout_update" {
-  type        = string
-  description = "Timeout for creating the statefulset"
-  default     = "2m"
-}
-
-variable "timeout_delete" {
-  type        = string
-  description = "Timeout for creating the statefulset"
-  default     = "10m"
-}
-
 variable "labels" {
   type        = map(string)
   description = "Labels to add"
@@ -40,19 +22,55 @@ variable "labels" {
 variable "image_name" {
   type        = string
   description = "Docker image to use"
-  default     = "bitnami/postgresql"
+  default     = "postgres"
 }
 
 variable "image_tag" {
   type        = string
   description = "Docker image tag to use"
-  default     = "13.4.0-debian-10-r51"
+  default     = "18.3"
+}
+
+variable "init_image_name" {
+  type        = string
+  description = "Docker image to use for the init container"
+  default     = "busybox"
+}
+
+variable "init_image_tag" {
+  type        = string
+  description = "Docker image tag to use for the init container"
+  default     = "stable"
 }
 
 variable "service_account_name" {
   type        = string
   description = "Service account name to add to the pod"
   default     = ""
+}
+
+variable "timeout_create" {
+  type        = string
+  description = "Timeout for creating the statefulset"
+  default     = "4m"
+}
+
+variable "timeout_update" {
+  type        = string
+  description = "Timeout for creating the statefulset"
+  default     = "4m"
+}
+
+variable "timeout_delete" {
+  type        = string
+  description = "Timeout for creating the statefulset"
+  default     = "10m"
+}
+
+variable "admin_username" {
+  type        = string
+  description = "Username of the admin/superuser account"
+  default     = "postgres"
 }
 
 variable "username" {
@@ -82,7 +100,13 @@ variable "password_autocreate_special" {
 variable "password_key" {
   type        = string
   description = "Key containing database password information"
-  default     = "password"
+  default     = "postgresql-password"
+}
+
+variable "password_key_root" {
+  type        = string
+  description = "Key containing database root password information"
+  default     = "postgresql-root-password"
 }
 
 variable "wait_for_rollout" {
@@ -107,6 +131,12 @@ variable "pod_management_policy" {
   type        = string
   description = "Controls how pods are created during scale up or down"
   default     = "OrderedReady"
+}
+
+variable "replicas" {
+  type        = number
+  description = "Amount of pods to create"
+  default     = 1
 }
 
 variable "revision_history" {
@@ -146,21 +176,21 @@ variable "empty_dir_size" {
 }
 
 variable "security_context_enabled" {
-  type        = bool
   description = "Enable the security context"
+  type        = bool
   default     = true
 }
 
 variable "security_context_uid" {
   type        = number
   description = "Group to run container as"
-  default     = 1001
+  default     = 999
 }
 
 variable "security_context_gid" {
   type        = number
   description = "User to run container as"
-  default     = 0
+  default     = 999
 }
 
 variable "resources_requests_cpu" {
@@ -242,7 +272,7 @@ variable "readiness_probe_enabled" {
 variable "readiness_probe_initial_delay" {
   type        = number
   description = "Initial delay of the probe in seconds"
-  default     = 30
+  default     = 10
 }
 
 variable "readiness_probe_period" {
@@ -278,7 +308,7 @@ variable "liveness_probe_enabled" {
 variable "liveness_probe_initial_delay" {
   type        = number
   description = "Initial delay of the probe in seconds"
-  default     = 30
+  default     = 10
 }
 
 variable "liveness_probe_period" {
@@ -320,7 +350,7 @@ variable "startup_probe_initial_delay" {
 variable "startup_probe_period" {
   type        = number
   description = "Period of the probe in seconds"
-  default     = 10
+  default     = 1
 }
 
 variable "startup_probe_timeout" {
@@ -338,5 +368,5 @@ variable "startup_probe_success" {
 variable "startup_probe_failure" {
   type        = number
   description = "Minimum consecutive failures for the probe to be considered failed after having succeeded"
-  default     = 3
+  default     = 180
 }
