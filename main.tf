@@ -267,7 +267,7 @@ resource "kubernetes_config_map_v1" "postgresql_init" {
     name      = "${var.object_prefix}-init"
     labels    = local.common_labels
   }
-  data = {
+  data = merge({
     "init.sh" = <<-EOT
       #!/bin/bash
       set -e
@@ -291,5 +291,5 @@ resource "kubernetes_config_map_v1" "postgresql_init" {
       GRANT ALL PRIVILEGES ON SCHEMA public TO "$POSTGRES_USERDB_USERNAME";
       EOSQL
     EOT
-  }
+  }, var.init_scripts)
 }

@@ -223,6 +223,12 @@ variable "env" {
   default     = {}
 }
 
+variable "init_scripts" {
+  type        = map(string)
+  description = "Additional init scripts to mount in /docker-entrypoint-initdb.d, keyed by filename"
+  default     = {}
+}
+
 variable "env_secret" {
   type = list(object({
     name   = string
